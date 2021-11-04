@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+// paketobom.BOMMetadata represents how the Paketo-specific implementation of
+// the Bill of Materials metadata components should be structured and named.
 type BOMMetadata struct {
 	Architecture    string      `toml:"arch,omitempty"`
 	CPE             string      `toml:"cpe,omitempty"`
