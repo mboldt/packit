@@ -13,6 +13,7 @@ import (
 
 	"github.com/paketo-buildpacks/packit"
 	"github.com/paketo-buildpacks/packit/cargo"
+	"github.com/paketo-buildpacks/packit/paketobom"
 	"github.com/paketo-buildpacks/packit/postal/internal"
 	"github.com/paketo-buildpacks/packit/servicebindings"
 	"github.com/paketo-buildpacks/packit/vacation"
@@ -192,40 +193,41 @@ func (s Service) Install(dependency Dependency, cnbPath, layerPath string) error
 func (s Service) GenerateBillOfMaterials(dependencies ...Dependency) []packit.BOMEntry {
 	var entries []packit.BOMEntry
 	for _, dependency := range dependencies {
-
-		entry := packit.BOMEntry{
-			Name: dependency.Name,
-			Metadata: packit.BOMMetadata{
-				Checksum: packit.BOMChecksum{
-					Algorithm: packit.SHA256,
-					Hash:      dependency.SHA256,
+		paketoBomMetadata := paketobom.BOMMetadata{
+			Checksum: paketobom.BOMChecksum{
+				Algorithm: paketobom.SHA256,
+				Hash:      dependency.SHA256,
+			},
+			URI:     dependency.URI,
+			Version: dependency.Version,
+			Source: paketobom.BOMSource{
+				Checksum: paketobom.BOMChecksum{
+					Algorithm: paketobom.SHA256,
+					Hash:      dependency.SourceSHA256,
 				},
-				URI:     dependency.URI,
-				Version: dependency.Version,
-				Source: packit.BOMSource{
-					Checksum: packit.BOMChecksum{
-						Algorithm: packit.SHA256,
-						Hash:      dependency.SourceSHA256,
-					},
-					URI: dependency.Source,
-				},
+				URI: dependency.Source,
 			},
 		}
 
 		if dependency.CPE != "" {
-			entry.Metadata.CPE = dependency.CPE
+			paketoBomMetadata.CPE = dependency.CPE
 		}
 
 		if (dependency.DeprecationDate != time.Time{}) {
-			entry.Metadata.DeprecationDate = dependency.DeprecationDate
+			paketoBomMetadata.DeprecationDate = dependency.DeprecationDate
 		}
 
 		if dependency.Licenses != nil {
-			entry.Metadata.Licenses = dependency.Licenses
+			paketoBomMetadata.Licenses = dependency.Licenses
 		}
 
 		if dependency.PURL != "" {
-			entry.Metadata.PURL = dependency.PURL
+			paketoBomMetadata.PURL = dependency.PURL
+		}
+
+		entry := packit.BOMEntry{
+			Name:     dependency.Name,
+			Metadata: paketoBomMetadata,
 		}
 
 		entries = append(entries, entry)

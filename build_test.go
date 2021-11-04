@@ -9,6 +9,7 @@ import (
 
 	"github.com/paketo-buildpacks/packit"
 	"github.com/paketo-buildpacks/packit/fakes"
+	"github.com/paketo-buildpacks/packit/paketobom"
 	"github.com/sclevine/spec"
 
 	. "github.com/onsi/gomega"
@@ -439,7 +440,7 @@ api = "0.6"
 
 	context("when there are bom entries in the build metadata", func() {
 		it("persists a build.toml", func() {
-			algorithm512, err := packit.GetBOMChecksumAlgorithm("sha512")
+			algorithm512, err := paketobom.GetBOMChecksumAlgorithm("sha512")
 			Expect(err).ToNot(HaveOccurred())
 
 			packit.Build(func(ctx packit.BuildContext) (packit.BuildResult, error) {
@@ -451,14 +452,14 @@ api = "0.6"
 							},
 							{
 								Name: "another-example",
-								Metadata: packit.BOMMetadata{
+								Metadata: paketobom.BOMMetadata{
 									Version: "0.5",
-									Checksum: packit.BOMChecksum{
-										Algorithm: packit.SHA256,
+									Checksum: paketobom.BOMChecksum{
+										Algorithm: paketobom.SHA256,
 										Hash:      "12345",
 									},
-									Source: packit.BOMSource{
-										Checksum: packit.BOMChecksum{
+									Source: paketobom.BOMSource{
+										Checksum: paketobom.BOMChecksum{
 											Algorithm: algorithm512,
 											Hash:      "some-source-sha",
 										},
@@ -514,7 +515,7 @@ api = "0.4"
 								},
 								{
 									Name: "another-example",
-									Metadata: packit.BOMMetadata{
+									Metadata: paketobom.BOMMetadata{
 										Version: "0.5",
 									},
 								},
@@ -603,7 +604,7 @@ api = "0.4"
 							},
 							{
 								Name: "another-example",
-								Metadata: packit.BOMMetadata{
+								Metadata: paketobom.BOMMetadata{
 									Version: "0.5",
 								},
 							},
@@ -1167,7 +1168,7 @@ api = "0.4"
 		})
 		context("when the attempted BOM checksum algorithm is not supported", func() {
 			it("persists a build.toml", func() {
-				_, err := packit.GetBOMChecksumAlgorithm("RANDOM-ALG")
+				_, err := paketobom.GetBOMChecksumAlgorithm("RANDOM-ALG")
 				Expect(err).To(MatchError("failed to get supported BOM checksum algorithm: RANDOM-ALG is not valid"))
 			})
 		})
