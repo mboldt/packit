@@ -1,7 +1,7 @@
 package packit
 
-// BOMEntry contains a bill of materials entry.
-type BOMEntry struct {
+// SBOMEntry contains a bill of materials entry.
+type SBOMEntry struct {
 	// Name represents the name of the entry.
 	Name string `toml:"name"`
 

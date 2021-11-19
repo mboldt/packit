@@ -13,7 +13,7 @@ import (
 
 	"github.com/paketo-buildpacks/packit"
 	"github.com/paketo-buildpacks/packit/cargo"
-	"github.com/paketo-buildpacks/packit/paketobom"
+	"github.com/paketo-buildpacks/packit/paketosbom"
 	"github.com/paketo-buildpacks/packit/postal/internal"
 	"github.com/paketo-buildpacks/packit/servicebindings"
 	"github.com/paketo-buildpacks/packit/vacation"
@@ -188,21 +188,21 @@ func (s Service) Install(dependency Dependency, cnbPath, layerPath string) error
 	return s.Deliver(dependency, cnbPath, layerPath, "/platform")
 }
 
-// GenerateBillOfMaterials will generate a list of BOMEntry values given a
+// GenerateBillOfMaterials will generate a list of SBOMEntry values given a
 // collection of Dependency values.
-func (s Service) GenerateBillOfMaterials(dependencies ...Dependency) []packit.BOMEntry {
-	var entries []packit.BOMEntry
+func (s Service) GenerateBillOfMaterials(dependencies ...Dependency) []packit.SBOMEntry {
+	var entries []packit.SBOMEntry
 	for _, dependency := range dependencies {
-		paketoBomMetadata := paketobom.BOMMetadata{
-			Checksum: paketobom.BOMChecksum{
-				Algorithm: paketobom.SHA256,
+		paketoBomMetadata := paketosbom.SBOMMetadata{
+			Checksum: paketosbom.SBOMChecksum{
+				Algorithm: paketosbom.SHA256,
 				Hash:      dependency.SHA256,
 			},
 			URI:     dependency.URI,
 			Version: dependency.Version,
-			Source: paketobom.BOMSource{
-				Checksum: paketobom.BOMChecksum{
-					Algorithm: paketobom.SHA256,
+			Source: paketosbom.SBOMSource{
+				Checksum: paketosbom.SBOMChecksum{
+					Algorithm: paketosbom.SHA256,
 					Hash:      dependency.SourceSHA256,
 				},
 				URI: dependency.Source,
@@ -225,7 +225,7 @@ func (s Service) GenerateBillOfMaterials(dependencies ...Dependency) []packit.BO
 			paketoBomMetadata.PURL = dependency.PURL
 		}
 
-		entry := packit.BOMEntry{
+		entry := packit.SBOMEntry{
 			Name:     dependency.Name,
 			Metadata: paketoBomMetadata,
 		}

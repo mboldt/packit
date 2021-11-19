@@ -223,8 +223,8 @@ func Build(f BuildFunc, options ...Option) {
 	}
 
 	if !result.Launch.isEmpty() {
-		if apiVersion.LessThan(apiV05) && len(result.Launch.BOM) > 0 {
-			config.exitHandler.Error(errors.New("BOM entries in launch.toml is only supported with Buildpack API v0.5 or higher"))
+		if apiVersion.LessThan(apiV05) && len(result.Launch.SBOM) > 0 {
+			config.exitHandler.Error(errors.New("SBOM entries in launch.toml is only supported with Buildpack API v0.5 or higher"))
 			return
 		}
 
@@ -234,10 +234,10 @@ func Build(f BuildFunc, options ...Option) {
 		}
 
 		var launch struct {
-			Processes []Process  `toml:"processes"`
-			Slices    []Slice    `toml:"slices"`
-			Labels    []label    `toml:"labels"`
-			BOM       []BOMEntry `toml:"bom"`
+			Processes []Process   `toml:"processes"`
+			Slices    []Slice     `toml:"slices"`
+			Labels    []label     `toml:"labels"`
+			SBOM      []SBOMEntry `toml:"sbom"`
 		}
 
 		launch.Processes = result.Launch.Processes
@@ -251,7 +251,7 @@ func Build(f BuildFunc, options ...Option) {
 		}
 
 		launch.Slices = result.Launch.Slices
-		launch.BOM = result.Launch.BOM
+		launch.SBOM = result.Launch.SBOM
 		if len(result.Launch.Labels) > 0 {
 			launch.Labels = []label{}
 			for k, v := range result.Launch.Labels {

@@ -15,7 +15,7 @@ import (
 	"time"
 
 	"github.com/paketo-buildpacks/packit"
-	"github.com/paketo-buildpacks/packit/paketobom"
+	"github.com/paketo-buildpacks/packit/paketosbom"
 	"github.com/paketo-buildpacks/packit/postal"
 	"github.com/paketo-buildpacks/packit/postal/fakes"
 	"github.com/sclevine/spec"
@@ -974,7 +974,7 @@ version = "this is super not semver"
 
 	context("GenerateBillOfMaterials", func() {
 
-		it("returns a list of BOMEntry values", func() {
+		it("returns a list of SBOMEntry values", func() {
 			entries := service.GenerateBillOfMaterials(
 				postal.Dependency{
 					ID:           "some-entry",
@@ -997,17 +997,17 @@ version = "this is super not semver"
 					Version:      "4.5.6",
 				},
 			)
-			Expect(entries).To(Equal([]packit.BOMEntry{
+			Expect(entries).To(Equal([]packit.SBOMEntry{
 				{
 					Name: "Some Entry",
-					Metadata: paketobom.BOMMetadata{
-						Checksum: paketobom.BOMChecksum{
-							Algorithm: paketobom.SHA256,
+					Metadata: paketosbom.SBOMMetadata{
+						Checksum: paketosbom.SBOMChecksum{
+							Algorithm: paketosbom.SHA256,
 							Hash:      "some-sha",
 						},
-						Source: paketobom.BOMSource{
-							Checksum: paketobom.BOMChecksum{
-								Algorithm: paketobom.SHA256,
+						Source: paketosbom.SBOMSource{
+							Checksum: paketosbom.SBOMChecksum{
+								Algorithm: paketosbom.SHA256,
 								Hash:      "some-source-sha",
 							},
 							URI: "some-source",
@@ -1019,14 +1019,14 @@ version = "this is super not semver"
 				},
 				{
 					Name: "Other Entry",
-					Metadata: paketobom.BOMMetadata{
-						Checksum: paketobom.BOMChecksum{
-							Algorithm: paketobom.SHA256,
+					Metadata: paketosbom.SBOMMetadata{
+						Checksum: paketosbom.SBOMChecksum{
+							Algorithm: paketosbom.SHA256,
 							Hash:      "other-sha",
 						},
-						Source: paketobom.BOMSource{
-							Checksum: paketobom.BOMChecksum{
-								Algorithm: paketobom.SHA256,
+						Source: paketosbom.SBOMSource{
+							Checksum: paketosbom.SBOMChecksum{
+								Algorithm: paketosbom.SHA256,
 								Hash:      "other-source-sha",
 							},
 							URI: "other-source",
@@ -1040,7 +1040,7 @@ version = "this is super not semver"
 		})
 
 		context("when there is a CPE", func() {
-			it("generates a BOM with the CPE", func() {
+			it("generates a SBOM with the CPE", func() {
 				entries := service.GenerateBillOfMaterials(
 					postal.Dependency{
 						CPE:          "some-cpe",
@@ -1055,18 +1055,18 @@ version = "this is super not semver"
 					},
 				)
 
-				Expect(entries).To(Equal([]packit.BOMEntry{
+				Expect(entries).To(Equal([]packit.SBOMEntry{
 					{
 						Name: "Some Entry",
-						Metadata: paketobom.BOMMetadata{
+						Metadata: paketosbom.SBOMMetadata{
 							CPE: "some-cpe",
-							Checksum: paketobom.BOMChecksum{
-								Algorithm: paketobom.SHA256,
+							Checksum: paketosbom.SBOMChecksum{
+								Algorithm: paketosbom.SHA256,
 								Hash:      "some-sha",
 							},
-							Source: paketobom.BOMSource{
-								Checksum: paketobom.BOMChecksum{
-									Algorithm: paketobom.SHA256,
+							Source: paketosbom.SBOMSource{
+								Checksum: paketosbom.SBOMChecksum{
+									Algorithm: paketosbom.SHA256,
 									Hash:      "some-source-sha",
 								},
 								URI: "some-source",
@@ -1089,7 +1089,7 @@ version = "this is super not semver"
 				Expect(err).NotTo(HaveOccurred())
 			})
 
-			it("generates a BOM with the deprecation date", func() {
+			it("generates a SBOM with the deprecation date", func() {
 				entries := service.GenerateBillOfMaterials(
 					postal.Dependency{
 						DeprecationDate: deprecationDate,
@@ -1104,18 +1104,18 @@ version = "this is super not semver"
 					},
 				)
 
-				Expect(entries).To(Equal([]packit.BOMEntry{
+				Expect(entries).To(Equal([]packit.SBOMEntry{
 					{
 						Name: "Some Entry",
-						Metadata: paketobom.BOMMetadata{
+						Metadata: paketosbom.SBOMMetadata{
 							DeprecationDate: deprecationDate,
-							Checksum: paketobom.BOMChecksum{
-								Algorithm: paketobom.SHA256,
+							Checksum: paketosbom.SBOMChecksum{
+								Algorithm: paketosbom.SHA256,
 								Hash:      "some-sha",
 							},
-							Source: paketobom.BOMSource{
-								Checksum: paketobom.BOMChecksum{
-									Algorithm: paketobom.SHA256,
+							Source: paketosbom.SBOMSource{
+								Checksum: paketosbom.SBOMChecksum{
+									Algorithm: paketosbom.SHA256,
 									Hash:      "some-source-sha",
 								},
 								URI: "some-source",
@@ -1130,7 +1130,7 @@ version = "this is super not semver"
 		})
 
 		context("when there is license information", func() {
-			it("generates a BOM with the license information", func() {
+			it("generates a SBOM with the license information", func() {
 				entries := service.GenerateBillOfMaterials(
 					postal.Dependency{
 						ID:           "some-entry",
@@ -1145,18 +1145,18 @@ version = "this is super not semver"
 					},
 				)
 
-				Expect(entries).To(Equal([]packit.BOMEntry{
+				Expect(entries).To(Equal([]packit.SBOMEntry{
 					{
 						Name: "Some Entry",
-						Metadata: paketobom.BOMMetadata{
+						Metadata: paketosbom.SBOMMetadata{
 							Licenses: []string{"some-license"},
-							Checksum: paketobom.BOMChecksum{
-								Algorithm: paketobom.SHA256,
+							Checksum: paketosbom.SBOMChecksum{
+								Algorithm: paketosbom.SHA256,
 								Hash:      "some-sha",
 							},
-							Source: paketobom.BOMSource{
-								Checksum: paketobom.BOMChecksum{
-									Algorithm: paketobom.SHA256,
+							Source: paketosbom.SBOMSource{
+								Checksum: paketosbom.SBOMChecksum{
+									Algorithm: paketosbom.SHA256,
 									Hash:      "some-source-sha",
 								},
 								URI: "some-source",
@@ -1171,7 +1171,7 @@ version = "this is super not semver"
 		})
 
 		context("when there is a pURL", func() {
-			it("generates a BOM with the pURL", func() {
+			it("generates a SBOM with the pURL", func() {
 				entries := service.GenerateBillOfMaterials(
 					postal.Dependency{
 						ID:           "some-entry",
@@ -1186,18 +1186,18 @@ version = "this is super not semver"
 					},
 				)
 
-				Expect(entries).To(Equal([]packit.BOMEntry{
+				Expect(entries).To(Equal([]packit.SBOMEntry{
 					{
 						Name: "Some Entry",
-						Metadata: paketobom.BOMMetadata{
+						Metadata: paketosbom.SBOMMetadata{
 							PURL: "some-purl",
-							Checksum: paketobom.BOMChecksum{
-								Algorithm: paketobom.SHA256,
+							Checksum: paketosbom.SBOMChecksum{
+								Algorithm: paketosbom.SHA256,
 								Hash:      "some-sha",
 							},
-							Source: paketobom.BOMSource{
-								Checksum: paketobom.BOMChecksum{
-									Algorithm: paketobom.SHA256,
+							Source: paketosbom.SBOMSource{
+								Checksum: paketosbom.SBOMChecksum{
+									Algorithm: paketosbom.SHA256,
 									Hash:      "some-source-sha",
 								},
 								URI: "some-source",

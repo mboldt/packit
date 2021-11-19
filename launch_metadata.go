@@ -18,17 +18,17 @@ type LaunchMetadata struct {
 
 	// BOM is the Bill-of-Material entries containing information about the
 	// dependencies provided to the launch environment.
-	BOM []BOMEntry
+	SBOM []SBOMEntry
 }
 
 func (l LaunchMetadata) isEmpty() bool {
 	return (len(l.Processes) == 0 &&
 		len(l.Slices) == 0 &&
 		len(l.Labels) == 0 &&
-		len(l.BOM) == 0)
+		len(l.SBOM) == 0)
 }
 
 func (b BuildMetadata) isEmpty() bool {
-	return (len(b.BOM) == 0 &&
+	return (len(b.SBOM) == 0 &&
 		len(b.Unmet) == 0)
 }

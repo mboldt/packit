@@ -9,7 +9,7 @@ import (
 
 	"github.com/paketo-buildpacks/packit"
 	"github.com/paketo-buildpacks/packit/fakes"
-	"github.com/paketo-buildpacks/packit/paketobom"
+	"github.com/paketo-buildpacks/packit/paketosbom"
 	"github.com/sclevine/spec"
 
 	. "github.com/onsi/gomega"
@@ -438,28 +438,28 @@ api = "0.6"
 		})
 	})
 
-	context("when there are bom entries in the build metadata", func() {
+	context("when there are sbom entries in the build metadata", func() {
 		it("persists a build.toml", func() {
-			algorithm512, err := paketobom.GetBOMChecksumAlgorithm("sha512")
+			algorithm512, err := paketosbom.GetSBOMChecksumAlgorithm("sha512")
 			Expect(err).ToNot(HaveOccurred())
 
 			packit.Build(func(ctx packit.BuildContext) (packit.BuildResult, error) {
 				return packit.BuildResult{
 					Build: packit.BuildMetadata{
-						BOM: []packit.BOMEntry{
+						SBOM: []packit.SBOMEntry{
 							{
 								Name: "example",
 							},
 							{
 								Name: "another-example",
-								Metadata: paketobom.BOMMetadata{
+								Metadata: paketosbom.SBOMMetadata{
 									Version: "0.5",
-									Checksum: paketobom.BOMChecksum{
-										Algorithm: paketobom.SHA256,
+									Checksum: paketosbom.SBOMChecksum{
+										Algorithm: paketosbom.SHA256,
 										Hash:      "12345",
 									},
-									Source: paketobom.BOMSource{
-										Checksum: paketobom.BOMChecksum{
+									Source: paketosbom.SBOMSource{
+										Checksum: paketosbom.SBOMChecksum{
 											Algorithm: algorithm512,
 											Hash:      "some-source-sha",
 										},
@@ -475,17 +475,17 @@ api = "0.6"
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(string(contents)).To(MatchTOML(`
-				[[bom]]
+				[[sbom]]
 					name = "example"
-				[[bom]]
+				[[sbom]]
 					name = "another-example"
-				[bom.metadata]
+				[sbom.metadata]
 					version = "0.5"
-				[bom.metadata.checksum]
+				[sbom.metadata.checksum]
 				  algorithm = "SHA-256"
 					hash = "12345"
-				[bom.metadata.source]
-				  [bom.metadata.source.checksum]
+				[sbom.metadata.source]
+				  [sbom.metadata.source.checksum]
 				    algorithm = "SHA-512"
 					  hash = "some-source-sha"
 			`))
@@ -509,13 +509,13 @@ api = "0.4"
 				packit.Build(func(ctx packit.BuildContext) (packit.BuildResult, error) {
 					return packit.BuildResult{
 						Build: packit.BuildMetadata{
-							BOM: []packit.BOMEntry{
+							SBOM: []packit.SBOMEntry{
 								{
 									Name: "example",
 								},
 								{
 									Name: "another-example",
-									Metadata: paketobom.BOMMetadata{
+									Metadata: paketosbom.SBOMMetadata{
 										Version: "0.5",
 									},
 								},
@@ -593,18 +593,18 @@ api = "0.4"
 
 	})
 
-	context("when there are bom entries in the launch metadata", func() {
+	context("when there are sbom entries in the launch metadata", func() {
 		it("persists a launch.toml", func() {
 			packit.Build(func(ctx packit.BuildContext) (packit.BuildResult, error) {
 				return packit.BuildResult{
 					Launch: packit.LaunchMetadata{
-						BOM: []packit.BOMEntry{
+						SBOM: []packit.SBOMEntry{
 							{
 								Name: "example",
 							},
 							{
 								Name: "another-example",
-								Metadata: paketobom.BOMMetadata{
+								Metadata: paketosbom.SBOMMetadata{
 									Version: "0.5",
 								},
 							},
@@ -617,11 +617,11 @@ api = "0.4"
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(string(contents)).To(MatchTOML(`
-				[[bom]]
+				[[sbom]]
 					name = "example"
-				[[bom]]
+				[[sbom]]
 					name = "another-example"
-				[bom.metadata]
+				[sbom.metadata]
 					version = "0.5"
 			`))
 		})
@@ -774,7 +774,7 @@ api = "0.5"
 		})
 	})
 
-	context("when there are no processes, slices, bom or labels in the result", func() {
+	context("when there are no processes, slices, sbom or labels in the result", func() {
 		it("does not persist a launch.toml", func() {
 			packit.Build(func(ctx packit.BuildContext) (packit.BuildResult, error) {
 				return packit.BuildResult{}, nil
@@ -1166,10 +1166,10 @@ api = "0.4"
 				})
 			})
 		})
-		context("when the attempted BOM checksum algorithm is not supported", func() {
+		context("when the attempted SBOM checksum algorithm is not supported", func() {
 			it("persists a build.toml", func() {
-				_, err := paketobom.GetBOMChecksumAlgorithm("RANDOM-ALG")
-				Expect(err).To(MatchError("failed to get supported BOM checksum algorithm: RANDOM-ALG is not valid"))
+				_, err := paketosbom.GetSBOMChecksumAlgorithm("RANDOM-ALG")
+				Expect(err).To(MatchError("failed to get supported SBOM checksum algorithm: RANDOM-ALG is not valid"))
 			})
 		})
 	})
